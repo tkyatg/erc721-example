@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  contract:
+    container_name: contract
+    build: .
+    ports:
+      - 13040:8545
+    volumes: 
+      - .:/contract
+    tty: true
+    environment: 
+      - TZ=Asia/Tokyo
+    networks:
+      - default
+networks: 
+  default:
