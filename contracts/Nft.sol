@@ -28,18 +28,6 @@ contract Nft is ERC721,ERC721URIStorage,ERC721Enumerable,ReentrancyGuard {
         latestTokenId++;
     }
 
-    function getOwnTokenIds()
-        public
-        view
-        returns (uint256[] memory)
-    {
-        uint256[] memory result = new uint256[](super.balanceOf(msg.sender));
-        for (uint i=0;i<super.balanceOf(msg.sender);i++){
-            result[i]=super.tokenOfOwnerByIndex(msg.sender,i);
-        }
-        return result;
-    }
-
     // 
     function _burn(uint256 tokenId)
         internal

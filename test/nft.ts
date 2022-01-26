@@ -56,13 +56,9 @@ describe("Nft", function () {
     await expect(
       nft.transferFrom(userAddress1, ownerAddress, 2)
     ).to.be.revertedWith("ERC721: transfer caller is not owner nor approved");
-    const getOwnTokenIdsRes1 = await nft.getOwnTokenIds();
-    console.log(getOwnTokenIdsRes1);
 
     // approve & transfer
     await nft.connect(signers[1]).setApprovalForAll(ownerAddress, true);
     await nft.transferFrom(userAddress1, ownerAddress, 2);
-    const getOwnTokenIdsRes2 = await nft.getOwnTokenIds();
-    console.log(getOwnTokenIdsRes2);
   });
 });
