@@ -16,6 +16,10 @@ export default {
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
+  env: {
+    appPublicKey: process.env.APP_PUBLIC_KEY,
+    appPrivateKey: process.env.APP_PRIVATE_KEY,
+  },
   css: [],
   plugins: [],
   components: true,
