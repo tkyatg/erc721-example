@@ -20,6 +20,18 @@
           </v-card-actions>
         </v-card>
       </v-col>
+      <v-col cols="6">
+        <v-card>
+          <v-list-item>
+            <v-list-item-title> 持っているNFT一覧 </v-list-item-title>
+          </v-list-item>
+          <v-card-title> </v-card-title>
+          <v-data-table
+            :headers="nftTable.headers"
+            :items="nftTable.nfts"
+          ></v-data-table>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -39,14 +51,42 @@ export default {
       createNftForm: {
         uri: "",
       },
+      nftTable: {
+        headers: [
+          { text: "tokenId", value: "tokenId" },
+          { text: "tokenUri", value: "tokenUri" },
+        ],
+        nfts: [],
+      },
     };
   },
+  async created() {
+    const web3 = new Web3(this.endpoint);
+    const json = require("../../artifacts/contracts/Nft.sol/Nft.json");
+    const nftContract = new web3.eth.Contract(json.abi, this.contractAddress);
+    this.web3 = web3;
+    this.nftContract = nftContract;
+    await this.getOwnNfts();
+  },
   methods: {
+    async getOwnNfts() {
+      const num = await this.nftContract.methods
+        .balanceOf(this.publicKey)
+        .call();
+      this.nftTable.nfts = [];
+      for (let i = 0; i < num; i++) {
+        let tokenId = await this.nftContract.methods
+          .tokenOfOwnerByIndex(this.publicKey, i)
+          .call();
+        let tokenUri = await this.nftContract.methods.tokenURI(tokenId).call();
+        this.nftTable.nfts.push({
+          tokenId: tokenId,
+          tokenUri: tokenUri,
+        });
+      }
+    },
     async createNft() {
-      const web3 = new Web3(this.endpoint);
-      const json = require("../../artifacts/contracts/Nft.sol/Nft.json");
-      const nftContract = new web3.eth.Contract(json.abi, this.contractAddress);
-      const nonce = await web3.eth.getTransactionCount(
+      const nonce = await this.web3.eth.getTransactionCount(
         this.publicKey,
         "latest"
       );
@@ -55,24 +95,19 @@ export default {
         to: this.contractAddress,
         nonce: nonce,
         gas: 500000,
-        data: nftContract.methods.mint(this.createNftForm.uri).encodeABI(),
+        data: this.nftContract.methods.mint(this.createNftForm.uri).encodeABI(),
       };
-      const signPromise = web3.eth.accounts.signTransaction(
+      const signPromise = this.web3.eth.accounts.signTransaction(
         tx,
         this.privateKey
       );
-      signPromise
+      await signPromise
         .then((signedTx) => {
           const tx = signedTx.rawTransaction;
           if (tx !== undefined) {
-            web3.eth.sendSignedTransaction(tx, function (err, hash) {
-              if (!err) {
-                console.log("The hash of your transaction is: ", hash);
-              } else {
-                console.log(
-                  "Something went wrong when submitting your transaction:",
-                  err
-                );
+            this.web3.eth.sendSignedTransaction(tx, function (err, hash) {
+              if (err) {
+                alert(err);
               }
             });
           }
@@ -80,29 +115,7 @@ export default {
         .catch((err) => {
           console.log("Promise failed:", err);
         });
-      // const signPromise = this.web3.eth.accounts.signTransaction(
-      //   tx,
-      //   this.privateKey
-      // );
-      // signPromise
-      //   .then((signedTx) => {
-      //     const tx = signedTx.rawTransaction;
-      //     if (tx !== undefined) {
-      //       this.web3.eth.sendSignedTransaction(tx, function (err, hash) {
-      //         if (!err) {
-      //           console.log("The hash of your transaction is: ", hash);
-      //         } else {
-      //           console.log(
-      //             "Something went wrong when submitting your transaction:",
-      //             err
-      //           );
-      //         }
-      //       });
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log("Promise failed:", err);
-      //   });
+      this.getOwnNfts();
     },
   },
 };
