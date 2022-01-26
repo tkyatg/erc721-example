@@ -1,11 +1,12 @@
 init:
 	npm install
 	docker-compose up -d
-run-node:
+## hardhat commands
+hh-node:
 	docker exec -it contract npx hardhat node
-compile:
+hh-compile:
 	docker exec -it contract npx hardhat compile
-deploy:
+hh-deploy:
 	docker exec -it contract npx hardhat run --network localhost scripts/deploy.ts
-test:
+hh-test:
 	docker exec -it contract npx hardhat test

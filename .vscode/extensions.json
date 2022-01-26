@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "DavidAnson.vscode-markdownlint",
-    "esbenp.prettier-vscode",
-    "rebornix.project-snippets",
-    "juanblanco.solidity",
-  ]
-}
