@@ -10,3 +10,5 @@ hh-deploy:
 	docker exec -it contract npx hardhat run --network localhost scripts/deploy.ts
 hh-test:
 	docker exec -it contract npx hardhat test
+tn-deploy:
+	docker exec -it contract npx hardhat run --network ropsten scripts/deploy.ts
