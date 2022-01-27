@@ -1,15 +1,15 @@
-// import { ethers } from "hardhat";
+import { ethers } from "hardhat";
 
-// async function main() {
-//   const Greeter = await ethers.getContractFactory("Nft");
-//   const greeter = await Greeter.deploy("Hello, Hardhat!");
+async function main() {
+  const Nft = await ethers.getContractFactory("Nft");
+  const nft = await Nft.deploy("name", "symbol");
 
-//   await greeter.deployed();
+  await nft.deployed();
 
-//   console.log("Greeter deployed to:", greeter.address);
-// }
+  console.log("Nft deployed to:", nft.address);
+}
 
-// main().catch((error) => {
-//   console.error(error);
-//   process.exitCode = 1;
-// });
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
